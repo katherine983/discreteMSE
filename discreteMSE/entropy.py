@@ -153,8 +153,8 @@ def apen(data, m):
     Bi = vector_matches(data[:-1], m, enttype='apen')
     k=m+1
     Ai = vector_matches(data, k, enttype='apen')
-    print('N-m', N-m)
-    print('Bi', len(Bi), 'Ai', len(Ai))
-    print(Bi.shape == Ai.shape)
+    #print('N-m', N-m)
+    #print('Bi', len(Bi), 'Ai', len(Ai))
+    #print(Bi.shape == Ai.shape)
     apen = np.sum(np.negative(np.log(Ai/Bi)))/(N-m)
     return apen, Bi, Ai
