@@ -130,7 +130,7 @@ def sampen(data, m):
     B = vector_matches(data[:-1], m, enttype='sampen')
     #print(B)
 
-    #get number of matches, store in variable 'mat'
+    #get number of matches, store in variable 'A'
     k = m+1
     A = vector_matches(data, k, enttype='sampen')
     #print(A)
