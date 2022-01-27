@@ -136,16 +136,17 @@ def sampen(data, m):
     #print(A)
     if A == 0:
         print("The data set is unique, there were no m+1-length matches.")
-        sampen = None
+        sampen = 'Undefined'
+        print(sampen, B, A)
         return sampen, B, A
     if B == 0:
         print("The data set is unique, there were no m-length matches.")
-        sampen = None
+        sampen = 'Undefined'
+        print(sampen, B, A)
         return sampen, B, A
     else:
-        ratio = B/A
-        sampen = -np.log(ratio)
-        print(sampen, B, A)
+        ratio = A/B
+        sampen = np.negative(np.log(ratio))
         return sampen, B, A
 
 def apen(data, m):
