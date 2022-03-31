@@ -123,14 +123,16 @@ def sampen(data, m, refseq=None):
     """
 
     #get number of m-length matches, store in variable 'B'
-    #use data sequence with ultimate value removed so that number of m-length vectors equals the number of m+1-length vectors.
-
-    B = vector_matches(data[:-1], m, enttype='sampen')
+    #use data sequence with ultimate value removed so that number of
+    #m-length vectors equals the number of m+1-length vectors.
+    Bi = vector_matches(data[:-1], m)
+    B = np.sum(Bi) - (len(Bi)-m)
     #print(B)
 
-    #get number of matches, store in variable 'A'
+    #get number of m+1-length matches, store in variable 'A'
     k = m+1
-    A = vector_matches(data, k, enttype='sampen')
+    Ai = vector_matches(data, k)
+    A = np.sum(Ai) - (len(Ai)-m)
     #print(A)
     if A == 0:
         print(f"The sequence {refseq} is unique, there were no m+1-length matches.")
@@ -177,9 +179,9 @@ def apen(data, m, version='approx'):
     """
     if version == 'approx':
         N = len(data)
-        Bi = vector_matches(data[:-1], m, enttype='apen')
+        Bi = vector_matches(data[:-1], m)
         k=m+1
-        Ai = vector_matches(data, k, enttype='apen')
+        Ai = vector_matches(data, k)
         #print('N-m', N-m)
         #print('Bi', len(Bi), 'Ai', len(Ai))
         #print(Bi.shape == Ai.shape)
@@ -187,9 +189,9 @@ def apen(data, m, version='approx'):
 
     if version == 'phi':
         N = len(data)
-        Bi = vector_matches(data, m, enttype='apen')
+        Bi = vector_matches(data, m)
         k=m+1
-        Ai = vector_matches(data, k, enttype='apen')
+        Ai = vector_matches(data, k)
         Cmi = Bi/(N-m+1)
         Cm1i = Ai/(N-m)
         phim = (np.log(Cmi).sum())/(N-m+1)
