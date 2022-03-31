@@ -84,14 +84,14 @@ def vector_matches(data, m, r=0, enttype=None):
         matches = np.sum(sim_dist==r)
     return matches
 
-def sampen(data, m):
+def sampen(data, m, refseq=None):
     """
     This is a function to measure the sample entropy of a given string or
     discrete-valued (categorical) time series. For this implementation, we follow
     the same terminology and notation used by Richman & Moorman (2000). The
     data sequence, X={u(1), u(2), u(i), ..., u(n-m)}, is used to form a sequence, xmi, of
     m-length vectors where each xi in xmi is the vector of m data points from
-    u(i) to u(i+m-1). For each m-length vector, xm(i) for 1 <= i <= N-m, in X,
+    u(i) to u(i+m-1). For each m-length vector, xm(i) for 0 <= i <= N-m-1, in X,
     let Bi be the number of vectors, xm(j) for 1<=j<= N-m and j!= i, in X that match xm(i).
     The xm(i) is called the template vector, and an xm(j) which matches
     with xm(i) is called the template match. For each m+1-length vector, xm1(i) for
@@ -112,6 +112,9 @@ def sampen(data, m):
 
     m : INTEGER
         THE LENGTH OF THE TEMPLATE SEQUENCE.
+
+    refseq : STR, NONE
+        USE TO SUPPLY A NAME OF THE DATA SEQUENCE IN STRING FORMAT.
 
     Returns
     -------
@@ -135,12 +138,12 @@ def sampen(data, m):
     A = vector_matches(data, k, enttype='sampen')
     #print(A)
     if A == 0:
-        print("The data set is unique, there were no m+1-length matches.")
+        print(f"The sequence {refseq} is unique, there were no m+1-length matches.")
         sampen = 'Undefined'
         print(sampen, B, A)
         return sampen, B, A
     if B == 0:
-        print("The data set is unique, there were no m-length matches.")
+        print("The sequence {refseq} is unique, there were no m-length matches.")
         sampen = 'Undefined'
         print(sampen, B, A)
         return sampen, B, A
@@ -149,13 +152,53 @@ def sampen(data, m):
         sampen = np.negative(np.log(ratio))
         return sampen, B, A
 
-def apen(data, m):
-    N = len(data)
-    Bi = vector_matches(data[:-1], m, enttype='apen')
-    k=m+1
-    Ai = vector_matches(data, k, enttype='apen')
-    #print('N-m', N-m)
-    #print('Bi', len(Bi), 'Ai', len(Ai))
-    #print(Bi.shape == Ai.shape)
-    apen = np.sum(np.negative(np.log(Ai/Bi)))/(N-m)
+def apen(data, m, version='approx'):
+    """
+
+
+    Parameters
+    ----------
+    data : STRING OR LIST-LIKE ITERABLE OF INTEGERS
+        INTEGER CODED DISCRETE-VALUED DATA SEQUENCE.
+    m : INTEGER
+        THE LENGTH OF THE TEMPLATE SEQUENCE.
+    version : STRING, optional
+        SPECIFIES WHICH TYPE OF APEN ALGORITHM TO USE TO CALCULATE APEN. The default is 'approx'.
+        The value 'approx' will use the approximation of the ApEn statistic,
+        ApEn ~ (N-m)^-1 * SUM(i=0, N-m-1)ln(A_i/B_i).
+        The value 'phi' will calculate ApEn as the difference Phi_m(r) - Phi_m+1(r),
+        which is equivalent to
+        ((N-m+1)**(-1) * SUM(i=0, N-m) ln(B_i/(N-m+1))) - ((N-m)**(-1) * SUM(i=0, N-m-1) ln(A_i/(N-m)))
+
+    Returns
+    -------
+    apen : NUMERIC, FLOAT
+        THE VALUE OF APPROXIMATE ENTROPY PER THE METHOD SPECIFIED BY version.
+    Bi : ARRAY
+        NUMPY ARRAY CONTAINING THE VALUES OF B_i FOR EACH i.
+    Ai : ARRAY
+        NUMPY ARRAY CONTAINING THE VALUES OF A_i FOR EACH i.
+
+    """
+    if version == 'approx':
+        N = len(data)
+        Bi = vector_matches(data[:-1], m, enttype='apen')
+        k=m+1
+        Ai = vector_matches(data, k, enttype='apen')
+        #print('N-m', N-m)
+        #print('Bi', len(Bi), 'Ai', len(Ai))
+        #print(Bi.shape == Ai.shape)
+        apen = np.sum(np.negative(np.log(Ai/Bi)))/(N-m)
+
+    if version == 'phi':
+        N = len(data)
+        Bi = vector_matches(data, m, enttype='apen')
+        k=m+1
+        Ai = vector_matches(data, k, enttype='apen')
+        Cmi = Bi/(N-m+1)
+        Cm1i = Ai/(N-m)
+        phim = (np.log(Cmi).sum())/(N-m+1)
+        phim1 = (np.log(Cm1i).sum())/(N-m)
+        apen = phim - phim1
+
     return apen, Bi, Ai
