@@ -40,7 +40,7 @@ def discrete_renyi(n, alpha=2):
 
     return r, rmax, rmin
 
-def vector_matches(data, m, r=0, enttype=None):
+def vector_matches(data, m, r=0):
     """
     Calculates the number of sequences matching the template within the margin r.
 
@@ -49,17 +49,10 @@ def vector_matches(data, m, r=0, enttype=None):
     data : ITERABLE REPRESENTING THE FULL DATA SEQUENCE
     m : TEMPLATE LENGTH
     r : FILTER SIZE or MAX DISTANCE BETWEEN TWO VECTORS FOR THE VECTORS TO BE CONSIDERED MATCHING
-    enttype : NONE OR STRING
-        IF None WILL RETURN A SINGLE INTEGER SUM OVER ALL XI/XJ PAIRS. IF 'sampen'
-        WILL GIVE SUM OVER ALL XI/XJ PAIRS, SUBTRACTING len(data) TO REMOVE SELF
-        MATCHES. IF 'apen' WILL RETURN AN ARRAY OF THE NUMBER OF XI/XJ MATCHES
-        FOR EACH XI.
 
     Returns
     -------
     matches
-
-    matches : integer representing the number of matching vectors length(m) within a distance r contained within the full sequence
 
     """
     xmi = np.array([data[i:i+m] for i in range(len(data)-m+1)])
@@ -74,7 +67,8 @@ def vector_matches(data, m, r=0, enttype=None):
     dif = np.invert(xi_matrix==xmi).astype(int)
     #dif.sum(axis=2) evaluates to 0 for xi that fully matched and >0 for xi that did not fully match
     sim_dist = dif.sum(axis=2)
-
+    matches= np.sum(sim_dist==r, axis=1)
+    """
     if enttype == 'sampen':
         #subtract len(xmi) to remove self matches from the total
         matches = np.sum(sim_dist==r) - len(xmi)
@@ -82,6 +76,7 @@ def vector_matches(data, m, r=0, enttype=None):
         matches= np.sum(sim_dist==r, axis=1)
     elif enttype == None:
         matches = np.sum(sim_dist==r)
+        """
     return matches
 
 def sampen(data, m, refseq=None):
@@ -91,7 +86,7 @@ def sampen(data, m, refseq=None):
     the same terminology and notation used by Richman & Moorman (2000). The
     data sequence, X={u(1), u(2), u(i), ..., u(n-m)}, is used to form a sequence, xmi, of
     m-length vectors where each xi in xmi is the vector of m data points from
-    u(i) to u(i+m-1). For each m-length vector, xm(i) for 0 <= i <= N-m-1, in X,
+    u(i) to u(i+m-1). For each m-length vector, xm(i) for 1 <= i <= N-m, in X,
     let Bi be the number of vectors, xm(j) for 1<=j<= N-m and j!= i, in X that match xm(i).
     The xm(i) is called the template vector, and an xm(j) which matches
     with xm(i) is called the template match. For each m+1-length vector, xm1(i) for
