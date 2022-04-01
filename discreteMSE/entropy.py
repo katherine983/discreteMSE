@@ -63,7 +63,7 @@ def vector_matches(data, m, r=0):
     #create 3d array of xmi vectors where each xi in xmi is its own 1xm subarray
     xi_matrix = np.stack([xmi], axis=2).reshape((z,1,m))
 
-    #dif is a 3D array containing the pairwise kronecker delta between xi and xmi for all xi.
+    #dif is a 3D array containing the pairwise inverse kronecker delta between xi and xmi for all xi.
     dif = np.invert(xi_matrix==xmi).astype(int)
     #dif.sum(axis=2) evaluates to 0 for xi that fully matched and >0 for xi that did not fully match
     sim_dist = dif.sum(axis=2)
@@ -126,13 +126,13 @@ def sampen(data, m, refseq=None):
     #use data sequence with ultimate value removed so that number of
     #m-length vectors equals the number of m+1-length vectors.
     Bi = vector_matches(data[:-1], m)
-    B = np.sum(Bi) - (len(Bi)-m)
+    B = np.sum(Bi) - (len(data)-m)
     #print(B)
 
     #get number of m+1-length matches, store in variable 'A'
     k = m+1
     Ai = vector_matches(data, k)
-    A = np.sum(Ai) - (len(Ai)-m)
+    A = np.sum(Ai) - (len(data)-m)
     #print(A)
     if A == 0:
         print(f"The sequence {refseq} is unique, there were no m+1-length matches.")
@@ -145,8 +145,7 @@ def sampen(data, m, refseq=None):
         print(sampen, B, A)
         return sampen, B, A
     else:
-        ratio = A/B
-        sampen = np.negative(np.log(ratio))
+        sampen = np.negative(np.log(A/B))
         return sampen, B, A
 
 def apen(data, m, version='approx'):
