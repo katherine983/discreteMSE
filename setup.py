@@ -16,7 +16,7 @@ here = pathlib.Path(__file__).resolve().parent
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
-      name = "pyusm",
+      name = "discreteMSE",
       version = "0.1.0",
       description = "A Python implementation of Approximate Entropy and Sample Entropy for discrete-valued time series.",
       long_description = long_description,
@@ -25,6 +25,6 @@ setup(
       author = "Katherine Wuestney",
       # author_email = "katherineann983@gmail.com",
       keywords = "ApEn, SampEn, sample entropy, MSE, categorical time series, discrete-valued time series",
-      install_requires = ['numpy>=1.20.1'],
+      install_requires = ['numpy>=1.20'],
       packages = ['discreteMSE'],
       python_requires = ">=3.6")
