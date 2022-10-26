@@ -8,6 +8,7 @@ Some variable naming is chosen to be in line with the notation used in the paper
 and Richman & Moorman (2000).
 """
 import numpy as np
+#from memory_profiler import profile
 
 def discrete_renyi(n, alpha=2):
     """
@@ -40,6 +41,7 @@ def discrete_renyi(n, alpha=2):
 
     return r, rmax, rmin
 
+@profile
 def vector_matches(data, m, r=0):
     """
     Calculates the number of sequences matching the template within the margin r.
@@ -64,7 +66,7 @@ def vector_matches(data, m, r=0):
     xi_matrix = np.stack([xmi], axis=2).reshape((z,1,m))
 
     #dif is a 3D array containing the pairwise inverse kronecker delta between xi and xmi for all xi.
-    dif = np.invert(xi_matrix==xmi).astype(int)
+    dif = np.invert(xi_matrix==xmi).astype(np.uint8)
     #dif.sum(axis=2) evaluates to 0 for xi that fully matched and >0 for xi that did not fully match
     sim_dist = dif.sum(axis=2)
     matches= np.sum(sim_dist==r, axis=1)
@@ -79,6 +81,7 @@ def vector_matches(data, m, r=0):
         """
     return matches
 
+@profile
 def sampen(data, m, refseq=None):
     """
     This is a function to measure the sample entropy of a given string or
@@ -148,6 +151,7 @@ def sampen(data, m, refseq=None):
         sampen = np.negative(np.log(A/B))
         return sampen, B, A
 
+@profile
 def apen(data, m, version='approx'):
     """
 
@@ -198,3 +202,10 @@ def apen(data, m, version='approx'):
         apen = phim - phim1
 
     return apen, Bi, Ai
+
+if __name__ == "__main__":
+    nobs = [1000, 5000, 10000, 25000, 50000]
+    for n in nobs:
+        data = np.random.randint(1, 27, size=n, dtype=np.uint8)
+        ApEn, Bi, Ai = apen(data, 2)
+        SampEn, B, A = sampen(data, 2)
