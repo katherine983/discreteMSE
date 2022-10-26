@@ -41,7 +41,7 @@ def discrete_renyi(n, alpha=2):
 
     return r, rmax, rmin
 
-@profile
+#@profile
 def vector_matches(data, m, r=0):
     """
     Calculates the number of sequences matching the template within the margin r.
@@ -81,7 +81,7 @@ def vector_matches(data, m, r=0):
         """
     return matches
 
-@profile
+#@profile
 def sampen(data, m, refseq=None):
     """
     This is a function to measure the sample entropy of a given string or
@@ -151,7 +151,7 @@ def sampen(data, m, refseq=None):
         sampen = np.negative(np.log(A/B))
         return sampen, B, A
 
-@profile
+#@profile
 def apen(data, m, version='approx'):
     """
 
