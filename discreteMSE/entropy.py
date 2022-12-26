@@ -82,7 +82,7 @@ def vector_matches(data, m, r=0):
     return matches
 
 #@profile
-def sampen(data, m, refseq=None):
+def sampen(data, m, refseq=None, suppress_msg=True):
     """
     This is a function to measure the sample entropy of a given string or
     discrete-valued (categorical) time series. For this implementation, we follow
@@ -138,14 +138,16 @@ def sampen(data, m, refseq=None):
     A = np.sum(Ai) - (len(data)-m)
     #print(A)
     if A == 0:
-        print(f"The sequence {refseq} is unique, there were no m+1-length matches.")
+        if not suppress_msg:
+            print(f"The sequence {refseq} is unique, there were no m+1-length matches.")
         sampen = 'Undefined'
-        print(sampen, B, A)
+        #print(sampen, B, A)
         return sampen, B, A
     if B == 0:
-        print("The sequence {refseq} is unique, there were no m-length matches.")
+        if not suppress_msg:
+            print("The sequence {refseq} is unique, there were no m-length matches.")
         sampen = 'Undefined'
-        print(sampen, B, A)
+        #print(sampen, B, A)
         return sampen, B, A
     else:
         sampen = np.negative(np.log(A/B))
