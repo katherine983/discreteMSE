@@ -206,8 +206,9 @@ def apen(data, m, version='approx'):
     return apen, Bi, Ai
 
 if __name__ == "__main__":
-    nobs = [1000, 5000, 10000, 25000, 50000]
+    nobs = [1000]
     for n in nobs:
         data = np.random.randint(1, 27, size=n, dtype=np.uint8)
-        ApEn, Bi, Ai = apen(data, 2)
-        SampEn, B, A = sampen(data, 2)
+        matches = vector_matches(data, 2)
+        #ApEn, Bi, Ai = apen(data, 2)
+        #SampEn, B, A = sampen(data, 2)
